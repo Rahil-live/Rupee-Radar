@@ -1,0 +1,104 @@
+{
+  "merchants": {
+    "SWIGGY": {
+      "category": "Food",
+      "aliases": ["SWIGGY INDIA", "SWIGGY PAYMENT"]
+    },
+    "ZOMATO": {
+      "category": "Food",
+      "aliases": ["ZOMATO INDIA", "ZOMATO ONLINE", "ZOMATO PAYMENT"]
+    },
+    "DOMINOS": {
+      "category": "Food",
+      "aliases": ["DOMINOS PIZZA"]
+    },
+    "UBER": {
+      "category": "Travel",
+      "aliases": ["UBER INDIA", "UBER TRIP"]
+    },
+    "OLA": {
+      "category": "Travel",
+      "aliases": ["OLA INDIA", "OLA CABS", "OLA PAYMENT"]
+    },
+    "IRCTC": {
+      "category": "Travel",
+      "aliases": ["IRCTC TRAIN", "IRCTC RAILWAY"]
+    },
+    "AMAZON": {
+      "category": "Shopping",
+      "aliases": ["AMAZON IN", "AMAZON INDIA", "AMAZON PAY"]
+    },
+    "FLIPKART": {
+      "category": "Shopping",
+      "aliases": ["FLIPKART INDIA", "FLIPKART PAYMENT"]
+    },
+    "MYNTRA": {
+      "category": "Shopping",
+      "aliases": ["MYNTRA INDIA"]
+    },
+    "BESCOM": {
+      "category": "Bills",
+      "aliases": ["BESCOM BILL", "BESCOM PAYMENT"]
+    },
+    "AIRTEL": {
+      "category": "Bills",
+      "aliases": ["AIRTEL PAYMENT", "AIRTEL BILL", "AIRTEL INDIA"]
+    },
+    "JIO": {
+      "category": "Bills",
+      "aliases": ["JIO PAYMENT", "JIO BILL", "JIO INDIA", "RELIANCE JIO"]
+    },
+    "NETFLIX": {
+      "category": "Subscriptions",
+      "aliases": ["NETFLIX INDIA", "NETFLIX PAYMENT"]
+    },
+    "SPOTIFY": {
+      "category": "Subscriptions",
+      "aliases": ["SPOTIFY INDIA", "SPOTIFY PAYMENT"]
+    },
+    "ZERODHA": {
+      "category": "Investments",
+      "aliases": ["ZERODHA PAYMENT", "ZERODHA ACCOUNT"]
+    },
+    "GROWW": {
+      "category": "Investments",
+      "aliases": ["GROWW PAYMENT", "GROWW INVESTMENT"]
+    },
+    "NOBROKER": {
+      "category": "Rent",
+      "aliases": ["NOBROKER RENT", "NOBROKER PAYMENT"]
+    },
+    "STARBUCKS": {
+      "category": "Food",
+      "aliases": ["STARBUCKS INDIA", "STARBUCKS COFFEE"]
+    },
+    "BIGBASKET": {
+      "category": "Food",
+      "aliases": ["BIGBASKET GROCERY", "BIGBASKET PAYMENT"]
+    },
+    "INSTAMART": {
+      "category": "Food",
+      "aliases": ["INSTAMART PAYMENT"]
+    },
+    "MAKEMYTRIP": {
+      "category": "Travel",
+      "aliases": ["MAKEMYTRIP PAYMENT", "MAKEMYTRIP INDIA"]
+    },
+    "LIC": {
+      "category": "Bills",
+      "aliases": ["LIC PAYMENT", "LIC PREMIUM"]
+    },
+    "AMAZON PRIME": {
+      "category": "Subscriptions",
+      "aliases": ["AMAZON PRIME INDIA"]
+    },
+    "YOUTUBE PREMIUM": {
+      "category": "Subscriptions",
+      "aliases": ["YOUTUBE PREMIUM INDIA"]
+    },
+    "HDFC": {
+      "category": "Bills",
+      "aliases": ["HDFC CREDIT CARD", "HDFC LOAN"]
+    }
+  }
+}
