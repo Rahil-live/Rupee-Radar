@@ -5,6 +5,7 @@ import {
   type Transaction,
   updateTransactionCategory,
 } from "../api/client";
+import { DEMO_SESSION_ID } from "../demoData";
 import { CATEGORY_COLORS, formatINR } from "../utils/format";
 
 interface TransactionTableProps {
@@ -22,6 +23,11 @@ export default function TransactionTable({
   const [error, setError] = useState<string | null>(null);
 
   async function handleCategoryChange(txnId: string, category: Category) {
+    if (sessionId === DEMO_SESSION_ID) {
+      const txn = transactions.find((item) => item.id === txnId);
+      if (txn) onCategoryUpdated?.({ ...txn, category, category_overridden: true });
+      return;
+    }
     setUpdating(txnId);
     setError(null);
     try {

@@ -20,6 +20,14 @@ import RecurringList from "../components/RecurringList";
 import ReportExport from "../components/ReportExport";
 import SummaryCards from "../components/SummaryCards";
 import TransactionTable from "../components/TransactionTable";
+import {
+  DEMO_INSIGHTS,
+  DEMO_SESSION_ID,
+  DEMO_RECURRING,
+  DEMO_RECURRING_MONTHLY,
+  DEMO_TRANSACTIONS,
+  demoAnalytics,
+} from "../demoData";
 import { formatINR } from "../utils/format";
 
 type Tab = "summary" | "transactions" | "recurring" | "insights";
@@ -33,6 +41,7 @@ const TABS: { id: Tab; label: string }[] = [
 
 export default function AnalysisPage() {
   const { sessionId } = useParams<{ sessionId: string }>();
+  const isDemo = sessionId === DEMO_SESSION_ID;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>("summary");
@@ -44,13 +53,15 @@ export default function AnalysisPage() {
   const [recurringTotal, setRecurringTotal] = useState(0);
   const [filename, setFilename] = useState("");
 
+  const baseAnalytics = isDemo ? (transactions.length ? demoAnalytics(transactions) : null) : analytics;
+
   const latestMonth = useMemo(() => {
-    if (!analytics?.period_end) return null;
-    return analytics.period_end.slice(0, 7);
-  }, [analytics?.period_end]);
+    if (!baseAnalytics?.period_end) return null;
+    return baseAnalytics.period_end.slice(0, 7);
+  }, [baseAnalytics?.period_end]);
 
   const filteredAnalytics = useMemo(() => {
-    if (!analytics || !thisMonthOnly || !latestMonth) return analytics;
+    if (!baseAnalytics || !thisMonthOnly || !latestMonth) return baseAnalytics;
 
     const monthTxns = transactions.filter((t) => t.date.startsWith(latestMonth) && t.amount < 0);
     const spend = monthTxns.reduce((sum, t) => sum + Math.abs(t.amount), 0);
@@ -65,12 +76,12 @@ export default function AnalysisPage() {
       .sort((a, b) => b.amount - a.amount);
 
     return {
-      ...analytics,
+      ...baseAnalytics,
       total_spend: spend,
       top_categories,
-      monthly_spend: analytics.monthly_spend.filter((m) => m.month === latestMonth),
+      monthly_spend: baseAnalytics.monthly_spend.filter((m) => m.month === latestMonth),
     };
-  }, [analytics, thisMonthOnly, latestMonth, transactions]);
+  }, [baseAnalytics, thisMonthOnly, latestMonth, transactions]);
 
   const refreshData = useCallback(async () => {
     if (!sessionId) return;
@@ -89,6 +100,16 @@ export default function AnalysisPage() {
 
   useEffect(() => {
     if (!sessionId) return;
+
+    if (isDemo) {
+      setFilename("sample-statement.csv");
+      setInsights(DEMO_INSIGHTS);
+      setTransactions(DEMO_TRANSACTIONS);
+      setRecurringGroups(DEMO_RECURRING);
+      setRecurringTotal(DEMO_RECURRING_MONTHLY);
+      setLoading(false);
+      return;
+    }
 
     async function load() {
       try {
@@ -110,7 +131,7 @@ export default function AnalysisPage() {
     }
 
     load();
-  }, [sessionId, refreshData]);
+  }, [sessionId, isDemo, refreshData]);
 
   async function handleDeleteSession() {
     if (!sessionId) return;
@@ -123,7 +144,11 @@ export default function AnalysisPage() {
     }
   }
 
-  async function handleCategoryUpdated() {
+  async function handleCategoryUpdated(txn?: Transaction) {
+    if (isDemo && txn) {
+      setTransactions((prev) => prev.map((item) => (item.id === txn.id ? txn : item)));
+      return;
+    }
     await refreshData();
   }
 
@@ -135,7 +160,7 @@ export default function AnalysisPage() {
     );
   }
 
-  if (error || !analytics || !filteredAnalytics) {
+  if (error || !baseAnalytics || !filteredAnalytics) {
     return (
       <PageShell>
         <div className="rounded-xl border border-red-200 bg-red-50 p-8 text-center">
@@ -152,25 +177,32 @@ export default function AnalysisPage() {
     <PageShell>
       <div className="mb-8">
         <Link to="/" className="text-sm font-medium text-brand-700 hover:underline">
-          ← Upload another
+          {isDemo ? "← Back" : "← Upload another"}
         </Link>
         <h1 className="mt-2 text-2xl font-bold text-slate-900">Spending Analysis</h1>
+        {isDemo && (
+          <p className="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+            Sample preview. Category changes stay in this browser and no file is uploaded.
+          </p>
+        )}
         <p className="text-sm text-slate-500">
-          {filename} · {analytics.transaction_count} transactions
-          {analytics.period_start && analytics.period_end && (
-            <> · {analytics.period_start} to {analytics.period_end}</>
+          {filename} · {baseAnalytics.transaction_count} transactions
+          {baseAnalytics.period_start && baseAnalytics.period_end && (
+            <> · {baseAnalytics.period_start} to {baseAnalytics.period_end}</>
           )}
         </p>
-        <div className="mt-4 flex flex-wrap items-center gap-4">
-          {sessionId && <ReportExport sessionId={sessionId} />}
-          <button
-            type="button"
-            onClick={handleDeleteSession}
-            className="text-sm font-medium text-red-600 hover:text-red-800"
-          >
-            Delete my data
-          </button>
-        </div>
+        {!isDemo && (
+          <div className="mt-4 flex flex-wrap items-center gap-4">
+            {sessionId && <ReportExport sessionId={sessionId} />}
+            <button
+              type="button"
+              onClick={handleDeleteSession}
+              className="text-sm font-medium text-red-600 hover:text-red-800"
+            >
+              Delete my data
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="mb-6 flex flex-wrap items-center gap-4 border-b border-slate-200">
@@ -212,12 +244,12 @@ export default function AnalysisPage() {
             )}
           </div>
 
-          <SummaryCards analytics={thisMonthOnly ? filteredAnalytics : analytics} />
+          <SummaryCards analytics={thisMonthOnly ? filteredAnalytics : baseAnalytics} />
 
-          {analytics.recurring_total_monthly > 0 && !thisMonthOnly && (
+          {baseAnalytics.recurring_total_monthly > 0 && !thisMonthOnly && (
             <div className="rounded-lg border border-purple-200 bg-purple-50 px-4 py-3 text-sm text-purple-800">
               Recurring commitments:{" "}
-              <span className="font-semibold">{formatINR(analytics.recurring_total_monthly)}/month</span>
+              <span className="font-semibold">{formatINR(baseAnalytics.recurring_total_monthly)}/month</span>
             </div>
           )}
 
@@ -229,7 +261,7 @@ export default function AnalysisPage() {
             <div>
               <h3 className="mb-3 text-base font-semibold text-slate-800">Monthly Trend</h3>
               <MonthlyTrendChart
-                analytics={thisMonthOnly ? analytics : filteredAnalytics}
+                analytics={thisMonthOnly ? baseAnalytics : filteredAnalytics}
                 highlightMonth={thisMonthOnly ? latestMonth : null}
               />
             </div>

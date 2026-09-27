@@ -2,6 +2,12 @@
 
 AI-powered personal finance assistant that parses Indian bank statements and surfaces spending insights.
 
+## Why there is a demo
+
+The real analysis needs a backend server. That server is what reads an uploaded bank statement. It can also call a free AI service to help sort transactions into categories. Those free AI tokens do not last forever. They can run out or expire, and then the live upload stops working even if the website itself is still open.
+
+That is why the app includes a demo. If the server is not connected, the home page shows a button: **Backend not connected, click here to check the project**. Click it and you can walk through a sample statement — spending totals, categories, recurring payments, and insights — without uploading an Excel file, and without a server or an AI key.
+
 ## Stack
 
 | Layer | Technology |

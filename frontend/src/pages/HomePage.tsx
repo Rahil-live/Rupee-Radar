@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import FileUpload from "../components/FileUpload";
 import { checkHealth } from "../api/client";
+import { DEMO_SESSION_ID } from "../demoData";
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -31,7 +32,11 @@ export default function HomePage() {
                   : "bg-red-100 text-red-800"
             }`}
           >
-            API {apiStatus === "loading" ? "connecting…" : apiStatus === "ok" ? "connected" : "offline"}
+            {apiStatus === "loading"
+              ? "Connecting…"
+              : apiStatus === "ok"
+                ? "Backend connected"
+                : "Backend not connected"}
           </span>
         </div>
       </header>
@@ -45,9 +50,17 @@ export default function HomePage() {
         </div>
 
         {apiStatus === "error" && (
-          <div className="mb-6 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800">
-            Cannot reach the API. Start the backend with{" "}
-            <code className="rounded bg-red-100 px-1">uvicorn app.main:app --reload</code>
+          <div className="mb-6 text-center">
+            <button
+              type="button"
+              onClick={() => navigate(`/analysis/${DEMO_SESSION_ID}`)}
+              className="rounded-lg bg-amber-600 px-6 py-3 text-sm font-semibold text-white hover:bg-amber-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
+            >
+              Backend not connected, click here to check the project
+            </button>
+            <p className="mt-3 text-sm text-slate-500">
+              Opens a sample statement. No Excel upload needed.
+            </p>
           </div>
         )}
 
@@ -55,10 +68,16 @@ export default function HomePage() {
           <div className="mb-6 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800">{error}</div>
         )}
 
-        <FileUpload
-          onUploaded={(sessionId) => navigate(`/analysis/${sessionId}`)}
-          onError={setError}
-        />
+        {apiStatus === "loading" && (
+          <p className="text-center text-sm text-slate-500">Checking backend…</p>
+        )}
+
+        {apiStatus === "ok" && (
+          <FileUpload
+            onUploaded={(sessionId) => navigate(`/analysis/${sessionId}`)}
+            onError={setError}
+          />
+        )}
 
         <div className="mt-8 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-xs leading-relaxed text-slate-600">
           <strong className="text-slate-700">Privacy:</strong> Your uploaded file is processed in memory
