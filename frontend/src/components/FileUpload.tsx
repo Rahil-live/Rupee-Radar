@@ -35,8 +35,8 @@ export default function FileUpload({ onUploaded, onError }: FileUploadProps) {
 
   return (
     <div
-      className={`rounded-2xl border-2 border-dashed p-12 text-center transition-colors ${
-        dragOver ? "border-brand-500 bg-brand-50" : "border-slate-300 bg-white"
+      className={`rounded-2xl border-2 border-dashed p-12 text-center shadow-sm transition-colors duration-200 ${
+        dragOver ? "border-brand-600 bg-brand-50" : "border-slate-300 bg-white"
       }`}
       onDragOver={(e) => {
         e.preventDefault();
@@ -53,7 +53,7 @@ export default function FileUpload({ onUploaded, onError }: FileUploadProps) {
       <p className="mt-2 text-sm text-slate-500">
         HDFC · ICICI · generic CSV · Excel (.xlsx) · max 10 MB
       </p>
-      <label className="mt-6 inline-block cursor-pointer rounded-lg bg-brand-600 px-6 py-2.5 text-sm font-medium text-white hover:bg-brand-700">
+      <label className="mt-6 inline-block cursor-pointer rounded-lg bg-brand-700 px-6 py-2.5 text-sm font-medium text-white transition-colors duration-200 hover:bg-brand-900 focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-brand-700">
         {uploading ? "Analyzing…" : "Choose file"}
         <input
           type="file"

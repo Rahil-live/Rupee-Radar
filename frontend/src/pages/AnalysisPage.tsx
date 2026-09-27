@@ -12,6 +12,7 @@ import {
   type RecurringGroup,
   type Transaction,
 } from "../api/client";
+import AppHeader from "../components/AppHeader";
 import CategoryChart from "../components/CategoryChart";
 import InsightCards from "../components/InsightCards";
 import MonthlyTrendChart from "../components/MonthlyTrendChart";
@@ -179,18 +180,22 @@ export default function AnalysisPage() {
         <Link to="/" className="text-sm font-medium text-brand-700 hover:underline">
           {isDemo ? "← Back" : "← Upload another"}
         </Link>
-        <h1 className="mt-2 text-2xl font-bold text-slate-900">Spending Analysis</h1>
-        {isDemo && (
-          <p className="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
-            Sample preview. Category changes stay in this browser and no file is uploaded.
-          </p>
-        )}
-        <p className="text-sm text-slate-500">
-          {filename} · {baseAnalytics.transaction_count} transactions
-          {baseAnalytics.period_start && baseAnalytics.period_end && (
-            <> · {baseAnalytics.period_start} to {baseAnalytics.period_end}</>
+        <div className="mt-3 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Spending analysis</h1>
+            <p className="mt-1 text-sm text-slate-500">
+              {filename} · {baseAnalytics.transaction_count} transactions
+              {baseAnalytics.period_start && baseAnalytics.period_end && (
+                <> · {baseAnalytics.period_start} to {baseAnalytics.period_end}</>
+              )}
+            </p>
+          </div>
+          {isDemo && (
+            <p className="rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-900">
+              Sample preview · edits stay in this browser
+            </p>
           )}
-        </p>
+        </div>
         {!isDemo && (
           <div className="mt-4 flex flex-wrap items-center gap-4">
             {sessionId && <ReportExport sessionId={sessionId} />}
@@ -205,21 +210,23 @@ export default function AnalysisPage() {
         )}
       </div>
 
-      <div className="mb-6 flex flex-wrap items-center gap-4 border-b border-slate-200">
+      <div className="mb-8 grid w-full grid-cols-2 gap-1 rounded-xl bg-slate-200/70 p-1 sm:inline-grid sm:w-auto sm:grid-cols-4" role="tablist">
         {TABS.map((tab) => (
           <button
             key={tab.id}
             type="button"
+            role="tab"
+            aria-selected={activeTab === tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
+            className={`cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 ${
               activeTab === tab.id
-                ? "border-brand-600 text-brand-700"
-                : "border-transparent text-slate-500 hover:text-slate-700"
+                ? "bg-white text-slate-900 shadow-sm"
+                : "text-slate-600 hover:text-slate-900"
             }`}
           >
             {tab.label}
             {tab.id === "recurring" && recurringGroups.length > 0 && (
-              <span className="ml-1.5 rounded-full bg-purple-100 px-1.5 py-0.5 text-xs text-purple-700">
+              <span className="ml-1.5 rounded-full bg-brand-100 px-1.5 py-0.5 text-xs text-brand-900">
                 {recurringGroups.length}
               </span>
             )}
@@ -299,12 +306,8 @@ export default function AnalysisPage() {
 
 function PageShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-6xl px-6 py-4">
-          <h1 className="text-xl font-bold text-brand-700">RupeeRadar</h1>
-        </div>
-      </header>
+    <div className="min-h-screen">
+      <AppHeader />
       <main className="mx-auto max-w-6xl px-6 py-10">{children}</main>
     </div>
   );

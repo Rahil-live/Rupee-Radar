@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import AppHeader from "../components/AppHeader";
 import FileUpload from "../components/FileUpload";
 import { checkHealth } from "../api/client";
 import { DEMO_SESSION_ID } from "../demoData";
+
+const POINTS = [
+  { title: "Categories", text: "Food, rent, EMIs, and the rest, sorted from the statement." },
+  { title: "Recurring", text: "Subscriptions and monthly commitments pulled out on their own." },
+  { title: "Insights", text: "A short read on where the money actually went." },
+];
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -17,55 +24,49 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-          <div>
-            <h1 className="text-xl font-bold text-brand-700">RupeeRadar</h1>
-            <p className="text-sm text-slate-500">Personal finance insights from bank statements</p>
-          </div>
-          <span
-            className={`rounded-full px-3 py-1 text-xs font-medium ${
-              apiStatus === "ok"
-                ? "bg-green-100 text-green-800"
-                : apiStatus === "loading"
-                  ? "bg-slate-100 text-slate-600"
-                  : "bg-red-100 text-red-800"
-            }`}
-          >
-            {apiStatus === "loading"
-              ? "Connecting…"
-              : apiStatus === "ok"
-                ? "Backend connected"
-                : "Backend not connected"}
-          </span>
-        </div>
-      </header>
+      <AppHeader status={apiStatus} />
 
-      <main className="mx-auto max-w-3xl px-6 py-16">
-        <div className="mb-8 text-center">
-          <h2 className="text-2xl font-semibold text-slate-800">Understand where your money goes</h2>
-          <p className="mt-2 text-slate-500">
-            Upload HDFC, ICICI, or generic CSV/Excel bank statements for categorized spending insights.
+      <main className="mx-auto max-w-3xl px-6 py-14 sm:py-20">
+        <div className="mb-10">
+          <p className="text-sm font-medium text-brand-700">Personal finance</p>
+          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+            Understand where your money goes
+          </h1>
+          <p className="mt-3 max-w-xl text-base leading-relaxed text-slate-600">
+            Upload an HDFC, ICICI, or generic CSV or Excel statement. RupeeRadar turns the rows into
+            spending totals, charts, and a short set of notes.
           </p>
         </div>
 
+        <ul className="mb-10 grid gap-3 sm:grid-cols-3">
+          {POINTS.map((point) => (
+            <li key={point.title} className="rounded-2xl border border-slate-200 bg-white p-4">
+              <p className="text-sm font-semibold text-slate-900">{point.title}</p>
+              <p className="mt-1 text-sm leading-relaxed text-slate-500">{point.text}</p>
+            </li>
+          ))}
+        </ul>
+
         {apiStatus === "error" && (
-          <div className="mb-6 text-center">
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm">
+            <p className="text-sm text-slate-600">
+              The server is not connected, so a live upload is not available. You can still open a
+              sample statement and see the dashboard.
+            </p>
             <button
               type="button"
               onClick={() => navigate(`/analysis/${DEMO_SESSION_ID}`)}
-              className="rounded-lg bg-amber-600 px-6 py-3 text-sm font-semibold text-white hover:bg-amber-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
+              className="mt-4 cursor-pointer rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
             >
               Backend not connected, click here to check the project
             </button>
-            <p className="mt-3 text-sm text-slate-500">
-              Opens a sample statement. No Excel upload needed.
-            </p>
           </div>
         )}
 
         {error && (
-          <div className="mb-6 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800">{error}</div>
+          <div className="mb-6 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800" role="alert">
+            {error}
+          </div>
         )}
 
         {apiStatus === "loading" && (
@@ -79,16 +80,10 @@ export default function HomePage() {
           />
         )}
 
-        <div className="mt-8 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-xs leading-relaxed text-slate-600">
-          <strong className="text-slate-700">Privacy:</strong> Your uploaded file is processed in memory
-          and deleted immediately after parsing. Analysis data is stored temporarily (default 72 hours)
-          and can be deleted anytime. We do not share your statement with third parties — only
-          anonymized transaction descriptions are sent to the LLM for categorization when enabled.
-        </div>
-
-        <p className="mt-6 text-center text-xs text-slate-400">
-          Sample fixtures: <code>backend/tests/fixtures/hdfc_messy.csv</code>,{" "}
-          <code>icici_sample.csv</code> · Template: <code>docs/sample-statement-template.csv</code>
+        <p className="mt-8 text-xs leading-relaxed text-slate-500">
+          Uploaded files are parsed in memory and deleted right after. Analysis is kept for a short
+          time (72 hours by default) and can be deleted from the dashboard. Only anonymized
+          descriptions are sent to the AI when that step is turned on.
         </p>
       </main>
     </div>
