@@ -2,6 +2,8 @@
 
 AI-powered personal finance assistant that parses Indian bank statements and surfaces spending insights.
 
+Live app: [https://rupee-radar-bay.vercel.app/](https://rupee-radar-bay.vercel.app/)
+
 ## Why there is a demo
 
 The real analysis needs a backend server. That server is what reads an uploaded bank statement. It can also call a free AI service to help sort transactions into categories. Those free AI tokens do not last forever. They can run out or expire, and then the live upload stops working even if the website itself is still open.
